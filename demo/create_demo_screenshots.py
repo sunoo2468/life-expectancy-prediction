@@ -173,8 +173,6 @@ def create_demo_screenshots():
     ax2.set_title('Streamlit Web App Interface Demo', fontsize=16, fontweight='bold')
     plt.savefig('webapp_demo_screenshot.png', dpi=300, bbox_inches='tight')
     plt.show()
-    
-    print("✅ 데모 스크린샷들이 생성되었습니다!")
 
 if __name__ == "__main__":
     create_demo_screenshots()
