@@ -90,32 +90,32 @@ class LifeExpectancyPredictionModel:
             
             if os.path.exists(stress_path):
                 self.deep_learning_models['stress_mental'] = keras.models.load_model(stress_path, compile=False)
-                print("✅ 스트레스/정신건강 모델 로드 완료")
+                print("스트레스/정신건강 모델 로드 완료")
             
             if os.path.exists(physical_path):
                 self.deep_learning_models['physical_activity'] = keras.models.load_model(physical_path, compile=False)
-                print("✅ 신체활동 모델 로드 완료")
+                print("신체활동 모델 로드 완료")
             
             if os.path.exists(genetic_path):
                 self.deep_learning_models['genetic_risk'] = keras.models.load_model(genetic_path, compile=False)
-                print("✅ 유전적 위험도 모델 로드 완료")
+                print("유전적 위험도 모델 로드 완료")
             
             if os.path.exists(life_path):
                 self.deep_learning_models['life_expectancy_direct'] = keras.models.load_model(life_path, compile=False)
-                print("✅ 직접 수명 예측 모델 로드 완료")
+                print("직접 수명 예측 모델 로드 완료")
             
             # 로드된 모델 수 확인
             loaded_models = sum(1 for model in self.deep_learning_models.values() if model is not None)
             if loaded_models > 0:
-                print(f"🧠 딥러닝 모델 {loaded_models}개 성공적으로 로드됨")
+                print(f"딥러닝 모델 {loaded_models}개 성공적으로 로드됨")
             else:
-                print("⚠️ 로드된 딥러닝 모델이 없습니다.")
+                print("로드된 딥러닝 모델이 없습니다.")
             
 
                 
         except Exception as e:
-            print(f"⚠️ 딥러닝 모델 로드 실패: {e}")
-            print("📊 연구 기반 가중치 시스템으로 대체합니다.")
+            print(f"딥러닝 모델 로드 실패: {e}")
+            print("연구 기반 가중치 시스템으로 대체합니다.")
     
 
     
@@ -143,7 +143,7 @@ class LifeExpectancyPredictionModel:
                     predictions['mental_health_score'] = max(0, min(10, (raw_mental + 1) * 5))
                     
                 except Exception as e:
-                    print(f"⚠️ 스트레스/정신건강 모델 예측 실패: {e}")
+                    print(f"스트레스/정신건강 모델 예측 실패: {e}")
             
             # 신체활동 예측
             if self.deep_learning_models['physical_activity'] is not None:
@@ -163,7 +163,7 @@ class LifeExpectancyPredictionModel:
                     predictions['daily_steps'] = max(0, min(15000, (raw_steps + 1) * 7500))
                     
                 except Exception as e:
-                    print(f"⚠️ 신체활동 모델 예측 실패: {e}")
+                    print(f"신체활동 모델 예측 실패: {e}")
             
             # 유전적 위험도 예측
             if self.deep_learning_models['genetic_risk'] is not None:
@@ -176,7 +176,7 @@ class LifeExpectancyPredictionModel:
                     predictions['genetic_risk'] = max(0, min(1, (raw_genetic + 1) * 0.5))
                     
                 except Exception as e:
-                    print(f"⚠️ 유전적 위험도 모델 예측 실패: {e}")
+                    print(f"유전적 위험도 모델 예측 실패: {e}")
             
             # 직접 수명 예측
             if self.deep_learning_models['life_expectancy_direct'] is not None:
@@ -264,15 +264,15 @@ class LifeExpectancyPredictionModel:
                     predictions['raw_dl_prediction'] = raw_prediction  # 디버깅용
                     
                 except Exception as e:
-                    print(f"⚠️ 직접 수명 예측 모델 예측 실패: {e}")
+                    print(f"직접 수명 예측 모델 예측 실패: {e}")
             
             if predictions:
-                print(f"🧠 딥러닝 예측 성공: {len(predictions)}개 결과")
+                print(f"딥러닝 예측 성공: {len(predictions)}개 결과")
             
             return predictions
             
         except Exception as e:
-            print(f"⚠️ 딥러닝 예측 전체 실패: {e}")
+            print(f"딥러닝 예측 전체 실패: {e}")
             return {}
     
     def _prepare_deep_learning_input(self, features, target_model=None):
@@ -328,7 +328,7 @@ class LifeExpectancyPredictionModel:
                 return np.array(base_features).reshape(1, -1).astype(np.float32)
             
         except Exception as e:
-            print(f"⚠️ 딥러닝 입력 준비 실패: {e}")
+            print(f"딥러닝 입력 준비 실패: {e}")
             # 모델별 기본값
             if target_model == 'stress_mental':
                 return np.zeros((1, 9), dtype=np.float32)
@@ -519,7 +519,7 @@ class LifeExpectancyPredictionModel:
                         'importance': model.feature_importances_
                     }).sort_values('importance', ascending=False)
         
-        print(f"\n🏆 최고 성능 모델: {best_model_name.upper()}")
+        print(f"\n최고 성능 모델: {best_model_name.upper()}")
         print(f"최고 RMSE: {best_score:.4f}")
         
         return self.best_auxiliary_model
@@ -714,7 +714,7 @@ def test_life_expectancy_model():
     print("=" * 80)
     
     # 테스트 케이스 1: 건강한 생활습관
-    print("\n🧪 테스트 케이스 1: 건강한 생활습관")
+    print("\n테스트 케이스 1: 건강한 생활습관")
     healthy_result = model.predict_life_expectancy(
         bmi=22.0, waist_size=75, smoking_level=0, alcohol_consumption=0,
         sleep_quality=8.5, physical_activity=6, age=30, gender='male',
@@ -732,7 +732,7 @@ def test_life_expectancy_model():
         print(f"  {feature}: {contribution:.1%}")
     
     # 테스트 케이스 2: 위험한 생활습관
-    print("\n🧪 테스트 케이스 2: 위험한 생활습관")
+    print("\n테스트 케이스 2: 위험한 생활습관")
     risky_result = model.predict_life_expectancy(
         bmi=30.0, waist_size=100, smoking_level=2, alcohol_consumption=14,
         sleep_quality=3.0, physical_activity=1, age=45, gender='male',
@@ -751,7 +751,7 @@ def test_life_expectancy_model():
         print(f"  {feature}: {contribution:.1%}")
     
     # 연구 요약
-    print("\n📚 연구 기반 신뢰성:")
+    print("\n연구 기반 신뢰성:")
     research_summary = model.get_research_summary()
     print(f"총 연구 논문: {research_summary['total_papers']}개")
     print(f"최신 연구 (2020-2025): {research_summary['recent_papers']}개")
