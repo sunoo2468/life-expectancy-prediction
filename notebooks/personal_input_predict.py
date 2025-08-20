@@ -1,5 +1,8 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
+# 개인별 수명 예측 시스템 
+# python3 personal_input_predict.py으로 실행하시면 됩니다
+# https://github.com/sunoo2468/life-expectancy-prediction 에서 소스코드를 다운받아 실행하시면 됩니다
 
 import sys
 import os

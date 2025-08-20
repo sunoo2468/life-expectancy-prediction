@@ -129,7 +129,7 @@ def create_performance_charts():
     plt.savefig('model_comparison_charts.png', dpi=300, bbox_inches='tight')
     plt.show()
     
-    print("✅ 성능 평가 차트들이 생성되었습니다!")
+    print("성능 평가 차트들이 생성되었습니다!")
 
 if __name__ == "__main__":
     create_performance_charts()

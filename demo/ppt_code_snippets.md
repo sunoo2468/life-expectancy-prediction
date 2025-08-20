@@ -184,7 +184,7 @@ def run_cli_interface():
 import streamlit as st
 
 def main():
-    st.title("🧠 딥러닝 기반 수명 예측 AI 시스템")
+    st.title("딥러닝 기반 수명 예측 AI 시스템")
     
     # 사이드바 - 입력 폼
     with st.sidebar:
@@ -315,4 +315,4 @@ if __name__ == "__main__":
     main()
 ```
 
-이 코드 스니펫들을 PPT에 포함하면 기술적 깊이와 구현 내용을 효과적으로 보여줄 수 있습니다!
+코드 스니펫: 기술적 깊이와 구현 내용을 효과적으로 제시

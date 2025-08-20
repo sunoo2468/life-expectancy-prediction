@@ -68,5 +68,3 @@ cd web_app
 streamlit run app.py
 ```
 
-## 개발 일정
-
