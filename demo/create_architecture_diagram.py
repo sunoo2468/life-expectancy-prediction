@@ -165,7 +165,6 @@ def create_system_architecture():
     plt.tight_layout()
     plt.savefig('system_architecture.png', dpi=300, bbox_inches='tight')
     plt.show()
-    print("✅ 시스템 아키텍처 다이어그램이 생성되었습니다!")
 
 if __name__ == "__main__":
     create_system_architecture()
