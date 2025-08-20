@@ -204,20 +204,20 @@ class IntegratedWeightCalculator:
         for feature, risk, recs in feature_risks[:3]:
             if risk > 0.5:  # 높은 위험도
                 recommendations.extend([
-                    f"⚠️ {feature.replace('_', ' ').title()} 위험이 높습니다.",
+                    f"{feature.replace('_', ' ').title()} 위험이 높습니다.",
                     f"   → {recs[0] if recs else '즉시 개선이 필요합니다.'}"
                 ])
             elif risk > 0.25:  # 중간 위험도
                 recommendations.extend([
-                    f"⚠️ {feature.replace('_', ' ').title()} 개선이 권장됩니다.",
+                    f"{feature.replace('_', ' ').title()} 개선이 권장됩니다.",
                     f"   → {recs[0] if recs else '점진적 개선을 고려하세요.'}"
                 ])
         
         # 전반적인 건강 관리 권장사항
         recommendations.extend([
-            "💡 종합적인 건강 관리 계획을 수립하세요.",
-            "📊 정기적인 건강 검진을 받으세요.",
-            "🏥 필요시 의료진과 상담하세요."
+            "종합적인 건강 관리 계획을 수립하세요.",
+            "정기적인 건강 검진을 받으세요.",
+            "필요시 의료진과 상담하세요."
         ])
         
         return recommendations
@@ -229,22 +229,22 @@ class IntegratedWeightCalculator:
         
         # 각 피처별 주요 건강 영향
         if smoking_analysis['base_risk'] > 0.5:
-            impacts.append("🚬 흡연: 심혈관 질환, 폐암, 만성 폐질환 위험 증가")
+            impacts.append("흡연: 심혈관 질환, 폐암, 만성 폐질환 위험 증가")
         
         if bmi_waist_analysis['base_risk'] > 0.5:
-            impacts.append("⚖️ BMI & 허리둘레: 대사증후군, 당뇨병, 고혈압 위험 증가")
+            impacts.append("BMI & 허리둘레: 대사증후군, 당뇨병, 고혈압 위험 증가")
         
         if alcohol_analysis['base_risk'] > 0.5:
-            impacts.append("🍷 알코올: 암, 간질환, 심혈관 질환 위험 증가")
+            impacts.append("알코올: 암, 간질환, 심혈관 질환 위험 증가")
         
         if sleep_analysis['base_risk'] > 0.5:
-            impacts.append("😴 수면의 질: 당뇨병, 심혈관 질환, 정신 건강 문제 위험 증가")
+            impacts.append("수면의 질: 당뇨병, 심혈관 질환, 정신 건강 문제 위험 증가")
         
         if physical_activity_analysis['base_risk'] > 0.5:
-            impacts.append("🏃 신체활동: 만성질환, 조기 사망 위험 증가")
+            impacts.append("신체활동: 만성질환, 조기 사망 위험 증가")
         
         if not impacts:
-            impacts.append("✅ 전반적으로 양호한 건강 상태입니다.")
+            impacts.append("전반적으로 양호한 건강 상태입니다.")
         
         return impacts
     
@@ -276,7 +276,7 @@ def test_integrated_weights():
     print("=" * 80)
     
     # 테스트 케이스 1: 건강한 생활습관
-    print("\n🧪 테스트 케이스 1: 건강한 생활습관")
+    print("\n테스트 케이스 1: 건강한 생활습관")
     healthy_analysis = calculator.calculate_integrated_risk(
         smoking_status=0,  # never_smoker
         bmi=22.0, waist_circumference=75, height=170, gender='male',
@@ -292,7 +292,7 @@ def test_integrated_weights():
         print(f"  {feature}: {contribution:.1%}")
     
     # 테스트 케이스 2: 위험한 생활습관
-    print("\n🧪 테스트 케이스 2: 위험한 생활습관")
+    print("\n테스트 케이스 2: 위험한 생활습관")
     risky_analysis = calculator.calculate_integrated_risk(
         smoking_status=2, cigarettes_per_day=20,  # current_smoker
         bmi=30.0, waist_circumference=100, height=170, gender='male',
@@ -308,7 +308,7 @@ def test_integrated_weights():
         print(f"  {feature}: {contribution:.1%}")
     
     # 연구 요약
-    print("\n📚 연구 기반 신뢰성:")
+    print("\n연구 기반 신뢰성:")
     research_summary = calculator.get_research_summary()
     print(f"총 연구 논문: {research_summary['total_papers']}개")
     print(f"최신 연구 (2020-2025): {research_summary['recent_papers']}개")
