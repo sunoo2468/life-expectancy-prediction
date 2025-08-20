@@ -14,7 +14,7 @@ def evaluate_model_performance():
     print("=" * 80)
     
     # 데이터 로드
-    print("\n📊 데이터 로드 중...")
+    print("\n 데이터 로드 중...")
     data_processor = DataProcessor()
     
     # Life Expectancy Data 로드
@@ -26,7 +26,7 @@ def evaluate_model_performance():
     print(f"Lifestyle Data 크기: {lifestyle_data.shape}")
     
     # 데이터 전처리
-    print("\n🔧 데이터 전처리 중...")
+    print("\n 데이터 전처리 중...")
     
     # Life Expectancy Data 전처리
     life_expectancy_clean = data_processor.handle_missing_values(life_expectancy_data)
@@ -35,11 +35,11 @@ def evaluate_model_performance():
     lifestyle_clean = data_processor.handle_missing_values(lifestyle_data)
     
     # 모델 초기화
-    print("\n🤖 모델 초기화 중...")
+    print("\n 모델 초기화 중...")
     model = LifeExpectancyPredictionModel()
     
     # 연구 기반 가중치 시스템 성능 평가
-    print("\n📚 연구 기반 가중치 시스템 성능 평가:")
+    print("\n 연구 기반 가중치 시스템 성능 평가:")
     
     # 테스트 케이스들
     test_cases = [
@@ -76,7 +76,7 @@ def evaluate_model_performance():
     # 각 테스트 케이스 평가
     results = []
     for i, test_case in enumerate(test_cases, 1):
-        print(f"\n🧪 테스트 케이스 {i}: {test_case['name']}")
+        print(f"\n 테스트 케이스 {i}: {test_case['name']}")
         
         result = model.predict_life_expectancy(**test_case['params'])
         
@@ -96,10 +96,10 @@ def evaluate_model_performance():
         })
     
     # 성능 지표 계산
-    print("\n📈 모델 성능 지표:")
+    print("\n 모델 성능 지표:")
     
     # 1. 논리적 일관성 검증
-    print("\n1️⃣ 논리적 일관성 검증:")
+    print("\n 1. 논리적 일관성 검증:")
     healthy_reduction = results[0]['life_reduction']
     moderate_reduction = results[1]['life_reduction']
     risky_reduction = results[2]['life_reduction']
@@ -109,12 +109,12 @@ def evaluate_model_performance():
     print(f"  위험한 생활습관 수명 단축: {risky_reduction:.1f}년")
     
     if healthy_reduction < moderate_reduction < risky_reduction:
-        print("  ✅ 논리적 일관성: 위험도가 높을수록 수명 단축이 증가")
+        print(" 논리적 일관성: 위험도가 높을수록 수명 단축이 증가")
     else:
-        print("  ❌ 논리적 일관성 문제 발견")
+        print(" 논리적 일관성 문제 발견")
     
     # 2. 연구 기반 신뢰성
-    print("\n2️⃣ 연구 기반 신뢰성:")
+    print("\n 2. 연구 기반 신뢰성:")
     research_summary = model.get_research_summary()
     print(f"  총 연구 논문: {research_summary['total_papers']}개")
     print(f"  최신 연구 (2020-2025): {research_summary['recent_papers']}개")
@@ -123,7 +123,7 @@ def evaluate_model_performance():
     print(f"  신뢰도 점수: {research_summary['reliability_score']:.0%}")
     
     # 3. 실제 데이터와의 비교
-    print("\n3️⃣ 실제 데이터와의 비교:")
+    print("\n3. 실제 데이터와의 비교:")
     
     # Life Expectancy Data에서 한국 데이터 추출
     korea_data = life_expectancy_clean[life_expectancy_clean['Country'] == 'Korea, Republic of']
@@ -140,7 +140,7 @@ def evaluate_model_performance():
         print(f"  여성 기준 수명 오차: {female_error:.1f}세")
     
     # 4. 피처별 기여도 분석
-    print("\n4️⃣ 피처별 기여도 분석:")
+    print("\n4. 피처별 기여도 분석:")
     for test_case in test_cases:
         result = model.predict_life_expectancy(**test_case['params'])
         print(f"\n  {test_case['name']}:")
@@ -149,7 +149,7 @@ def evaluate_model_performance():
                 print(f"    {feature}: {contribution:.1%}")
     
     # 5. 종합 성능 평가
-    print("\n5️⃣ 종합 성능 평가:")
+    print("\n5. 종합 성능 평가:")
     
     # 논리적 일관성 점수
     consistency_score = 1.0 if healthy_reduction < moderate_reduction < risky_reduction else 0.5
@@ -169,13 +169,13 @@ def evaluate_model_performance():
     print(f"  종합 성능 점수: {overall_score:.1%}")
     
     if overall_score >= 0.9:
-        print("  🏆 우수한 성능")
+        print(" 우수한 성능")
     elif overall_score >= 0.8:
-        print("  👍 양호한 성능")
+        print(" 양호한 성능")
     elif overall_score >= 0.7:
-        print("  ⚠️ 보통 성능")
+        print(" 보통 성능")
     else:
-        print("  ❌ 개선 필요")
+        print(" 개선 필요")
     
     return results, overall_score
 

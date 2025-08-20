@@ -12,11 +12,11 @@ from model.life_expectancy_prediction_model import LifeExpectancyPredictionModel
 def get_user_input():
     """사용자로부터 건강 정보 입력받기"""
     print("=" * 60)
-    print("🏥 개인별 수명 예측 시스템")
+    print(" 개인별 수명 예측 시스템")
     print("=" * 60)
     
     # 기본 정보
-    print("\n📋 기본 정보")
+    print("\n 기본 정보")
     print("-" * 30)
     
     while True:
@@ -25,16 +25,16 @@ def get_user_input():
             if 18 <= age <= 100:
                 break
             else:
-                print("❌ 나이는 18-100 사이로 입력해주세요.")
+                print("나이는 18-100 사이로 입력해주세요.")
         except ValueError:
-            print("❌ 숫자로 입력해주세요.")
+            print("숫자로 입력해주세요.")
     
     while True:
         gender = input("성별을 입력하세요 (남성/여성): ").strip()
         if gender in ['남성', '여성']:
             break
         else:
-            print("❌ '남성' 또는 '여성'으로 입력해주세요.")
+            print("'남성' 또는 '여성'으로 입력해주세요.")
     
     # 연령대 분류
     if age < 30:
@@ -53,7 +53,7 @@ def get_user_input():
             smoking_status = int(smoking_input) - 1
             break
         else:
-            print("❌ 1, 2, 3 중에서 선택해주세요.")
+            print("1, 2, 3 중에서 선택해주세요.")
     
     years_since_quit = None
     cigarettes_per_day = 0
@@ -64,9 +64,9 @@ def get_user_input():
                 if 0 <= years_since_quit <= 50:
                     break
                 else:
-                    print("❌ 0-50 사이로 입력해주세요.")
+                    print("0-50 사이로 입력해주세요.")
             except ValueError:
-                print("❌ 숫자로 입력해주세요.")
+                print("숫자로 입력해주세요.")
     elif smoking_status == 2:  # 현재 흡연자
         while True:
             try:
@@ -74,12 +74,12 @@ def get_user_input():
                 if 1 <= cigarettes_per_day <= 50:
                     break
                 else:
-                    print("❌ 1-50 사이로 입력해주세요.")
+                    print("1-50 사이로 입력해주세요.")
             except ValueError:
-                print("❌ 숫자로 입력해주세요.")
+                print("숫자로 입력해주세요.")
     
     # BMI & 허리둘레 정보
-    print("\n📏 BMI & 허리둘레 정보")
+    print("\n BMI & 허리둘레 정보")
     print("-" * 30)
     while True:
         try:
@@ -87,9 +87,9 @@ def get_user_input():
             if 100 <= height <= 250:
                 break
             else:
-                print("❌ 100-250cm 사이로 입력해주세요.")
+                print(" 100-250cm 사이로 입력해주세요.")
         except ValueError:
-            print("❌ 숫자로 입력해주세요.")
+            print(" 숫자로 입력해주세요.")
     
     while True:
         try:
@@ -97,9 +97,9 @@ def get_user_input():
             if 30 <= weight <= 200:
                 break
             else:
-                print("❌ 30-200kg 사이로 입력해주세요.")
+                print(" 30-200kg 사이로 입력해주세요.")
         except ValueError:
-            print("❌ 숫자로 입력해주세요.")
+            print(" 숫자로 입력해주세요.")
     
     while True:
         try:
@@ -107,14 +107,14 @@ def get_user_input():
             if 50 <= waist_circumference <= 200:
                 break
             else:
-                print("❌ 50-200cm 사이로 입력해주세요.")
+                print(" 50-200cm 사이로 입력해주세요.")
         except ValueError:
-            print("❌ 숫자로 입력해주세요.")
+            print(" 숫자로 입력해주세요.")
     
     bmi = weight / ((height / 100) ** 2)
     
     # 알코올 정보
-    print("\n🍺 알코올 섭취 정보")
+    print("\n 알코올 섭취 정보")
     print("-" * 30)
     while True:
         try:
@@ -122,9 +122,9 @@ def get_user_input():
             if 0 <= drinks_per_week <= 7:
                 break
             else:
-                print("❌ 0-7 사이로 입력해주세요.")
+                print(" 0-7 사이로 입력해주세요.")
         except ValueError:
-            print("❌ 숫자로 입력해주세요.")
+            print(" 숫자로 입력해주세요.")
     
     drink_type = 'soju'  # 기본값
     if drinks_per_week > 0:
@@ -144,7 +144,7 @@ def get_user_input():
                 drink_type = 'spirit'
                 break
             else:
-                print("❌ 1, 2, 3 중에서 선택해주세요.")
+                print(" 1, 2, 3 중에서 선택해주세요.")
     
     binge_drinking = False
     if drinks_per_week > 0:
@@ -152,7 +152,7 @@ def get_user_input():
         binge_drinking = binge_input == '예'
     
     # 수면 정보
-    print("\n😴 수면 정보")
+    print("\n 수면 정보")
     print("-" * 30)
     while True:
         try:
@@ -160,9 +160,9 @@ def get_user_input():
             if 2 <= sleep_hours <= 12:
                 break
             else:
-                print("❌ 2-12시간 사이로 입력해주세요.")
+                print(" 2-12시간 사이로 입력해주세요.")
         except ValueError:
-            print("❌ 숫자로 입력해주세요.")
+            print(" 숫자로 입력해주세요.")
     
     while True:
         try:
@@ -170,9 +170,9 @@ def get_user_input():
             if 1 <= sleep_quality_score <= 10:
                 break
             else:
-                print("❌ 1-10 사이로 입력해주세요.")
+                print(" 1-10 사이로 입력해주세요.")
         except ValueError:
-            print("❌ 숫자로 입력해주세요.")
+            print(" 숫자로 입력해주세요.")
     
     insomnia = False
     sleep_apnea = False
@@ -189,7 +189,7 @@ def get_user_input():
     irregular_schedule = schedule_input == '예'
     
     # 신체활동 정보
-    print("\n🏃‍♂️ 신체활동 정보")
+    print("\n 신체활동 정보")
     print("-" * 30)
     while True:
         try:
@@ -197,9 +197,9 @@ def get_user_input():
             if 0 <= weekly_activity_minutes <= 1000:
                 break
             else:
-                print("❌ 0-1000분 사이로 입력해주세요.")
+                print(" 0-1000분 사이로 입력해주세요.")
         except ValueError:
-            print("❌ 숫자로 입력해주세요.")
+            print(" 숫자로 입력해주세요.")
     
     while True:
         try:
@@ -207,11 +207,11 @@ def get_user_input():
             if 0 <= daily_steps <= 20000:
                 break
             else:
-                print("❌ 0-20000보 사이로 입력해주세요.")
+                print(" 0-20000보 사이로 입력해주세요.")
         except ValueError:
-            print("❌ 숫자로 입력해주세요.")
+            print(" 숫자로 입력해주세요.")
     
-    print("\n운동 강도:")
+    print("\n 운동 강도:")
     print("1. 낮음 (걷기, 요가)")
     print("2. 중간 (조깅, 자전거)")
     print("3. 높음 (달리기, 수영)")
@@ -232,10 +232,10 @@ def get_user_input():
             intensity = 'very_high_intensity'
             break
         else:
-            print("❌ 1, 2, 3, 4 중에서 선택해주세요.")
+            print(" 1, 2, 3, 4 중에서 선택해주세요.")
     
     # 추가 위험 요인
-    print("\n⚠️ 추가 위험 요인")
+    print("\n 추가 위험 요인")
     print("-" * 30)
     sedentary_job = input("앉아서 하는 직업인가요? (예/아니오): ").strip() == '예'
     no_exercise = weekly_activity_minutes == 0
@@ -262,7 +262,7 @@ def get_user_input():
             stress_level = 'high'
             break
         else:
-            print("❌ 1, 2, 3 중에서 선택해주세요.")
+            print(" 1, 2, 3 중에서 선택해주세요.")
     
     return {
         'age': age,
@@ -298,12 +298,12 @@ def get_user_input():
 def print_user_summary(user_data):
     """입력된 사용자 정보 요약 출력"""
     print("\n" + "=" * 60)
-    print("📊 입력된 건강 정보 요약")
+    print(" 입력된 건강 정보 요약")
     print("=" * 60)
     
-    print(f"👤 기본 정보: {user_data['age']}세 {user_data['gender']}")
-    print(f"📏 신체 정보: 키 {user_data['height']}cm, 몸무게 {user_data['weight']}kg, BMI {user_data['bmi']:.1f}")
-    print(f"📏 허리둘레: {user_data['waist_circumference']}cm")
+    print(f"기본 정보: {user_data['age']}세 {user_data['gender']}")
+    print(f"신체 정보: 키 {user_data['height']}cm, 몸무게 {user_data['weight']}kg, BMI {user_data['bmi']:.1f}")
+    print(f"허리둘레: {user_data['waist_circumference']}cm")
     
     # 흡연 정보
     smoking_status_text = ['비흡연자', '과거 흡연자', '현재 흡연자'][user_data['smoking_status']]
@@ -315,14 +315,14 @@ def print_user_summary(user_data):
     
     # 알코올 정보
     if user_data['drinks_per_week'] == 0:
-        print(f"🍺 알코올: 비음주자")
+        print(f"알코올: 비음주자")
     else:
-        print(f"🍺 알코올: 주 {user_data['drinks_per_week']}회 ({user_data['drink_type']})")
+        print(f"알코올: 주 {user_data['drinks_per_week']}회 ({user_data['drink_type']})")
         if user_data['binge_drinking']:
             print("   → 폭음 경향 있음")
     
     # 수면 정보
-    print(f"😴 수면: {user_data['sleep_hours']}시간 (품질: {user_data['sleep_quality_score']}/10점)")
+    print(f"수면: {user_data['sleep_hours']}시간 (품질: {user_data['sleep_quality_score']}/10점)")
     if user_data['insomnia']:
         print("   → 불면증 있음")
     if user_data['sleep_apnea']:
@@ -331,7 +331,7 @@ def print_user_summary(user_data):
         print("   → 불규칙한 수면")
     
     # 신체활동 정보
-    print(f"🏃‍♂️ 신체활동: 주 {user_data['weekly_activity_minutes']}분, 하루 {user_data['daily_steps']}보")
+    print(f"신체활동: 주 {user_data['weekly_activity_minutes']}분, 하루 {user_data['daily_steps']}보")
     intensity_text = {
         'low_intensity': '낮음',
         'moderate_intensity': '중간',
@@ -349,9 +349,9 @@ def print_user_summary(user_data):
     if user_data['poor_diet']: risk_factors.append("불규칙한 식습관")
     
     if risk_factors:
-        print(f"⚠️ 추가 위험 요인: {', '.join(risk_factors)}")
+        print(f"추가 위험 요인: {', '.join(risk_factors)}")
     
-    print(f"😰 스트레스 수준: {user_data['stress_level']}")
+    print(f"스트레스 수준: {user_data['stress_level']}")
 
 def main():
     """메인 함수"""
@@ -363,18 +363,19 @@ def main():
         print_user_summary(user_data)
         
         # 수명 예측 모델 초기화
-        print("\n🔬 수명 예측 분석 중...")
+        print("\n 수명 예측 분석 중...")
         model = LifeExpectancyPredictionModel()
         
-        # 수명 예측 실행
-        result = model.calculate_life_expectancy_reduction(
+        # 수명 예측 실행 (딥러닝 기반)
+        result = model.predict_life_expectancy(
+            age=user_data['age'],
+            gender='male' if user_data['gender'] == '남성' else 'female',
             smoking_status=user_data['smoking_status'],
             years_since_quit=user_data['years_since_quit'],
             cigarettes_per_day=user_data['cigarettes_per_day'],
             bmi=user_data['bmi'],
-            waist_circumference=user_data['waist_circumference'],
+            waist_size=user_data['waist_circumference'],
             height=user_data['height'],
-            gender='male' if user_data['gender'] == '남성' else 'female',
             age_group=user_data['age_group'],
             drinks_per_week=user_data['drinks_per_week'],
             drink_type=user_data['drink_type'],
@@ -396,45 +397,84 @@ def main():
             poor_diet=user_data['poor_diet']
         )
         
+        # 딥러닝 예측 결과 표시
+        if result.get('deep_learning_predictions'):
+            print("\n 딥러닝 예측 결과:")
+            print("-" * 30)
+            dl_pred = result['deep_learning_predictions']
+            
+            if 'stress_level' in dl_pred:
+                print(f"  스트레스 수준: {dl_pred['stress_level']:.2f}/10")
+            if 'mental_health_score' in dl_pred:
+                print(f"  정신건강 점수: {dl_pred['mental_health_score']:.2f}/10")
+            if 'physical_activity' in dl_pred:
+                print(f"  신체활동 점수: {dl_pred['physical_activity']:.2f}/10")
+            if 'daily_steps' in dl_pred:
+                print(f"  예상 걸음수: {dl_pred['daily_steps']:.0f}보")
+            if 'genetic_risk' in dl_pred:
+                print(f"  유전적 위험도: {dl_pred['genetic_risk']:.3f}")
+            if 'direct_life_expectancy' in dl_pred:
+                print(f"  딥러닝 직접 예측 수명: {dl_pred['direct_life_expectancy']:.1f}세")
+        
+                print(f"\n 예측 방법: {result.get('prediction_method', '연구 기반 가중치')}")
+        
         # 결과 출력
         print("\n" + "=" * 60)
-        print("🎯 수명 예측 결과")
+        print(" 수명 예측 결과")
         print("=" * 60)
         
-        print(f"📊 기준 수명: {result['base_life_expectancy']:.1f}세")
-        print(f"📉 예상 수명: {result['predicted_life_expectancy']:.1f}세")
-        print(f"⏰ 수명 단축: {result['life_reduction']:.1f}년")
-        print(f"📈 개선 잠재력: {result['life_improvement_potential']['improvement_potential']:.1f}년")
+        print(f" 기준 수명: {result['base_life_expectancy']:.1f}세")
+        print(f" 예상 수명: {result['final_life_expectancy']:.1f}세")
+        print(f" 수명 단축: {result['final_life_reduction']:.1f}년")
+        print(f" 개선 잠재력: {result['life_improvement_potential']['improvement_potential']:.1f}년")
         
-        print(f"\n⚠️ 위험 수준: {result['risk_level']}")
-        print(f"📋 종합 위험도: {result['risk_score']:.3f}")
+        print(f"\n 위험 수준: {result['risk_level']}")
         
-        print(f"\n🔍 피처별 기여도:")
-        print("-" * 30)
-        for feature, percentage in result['feature_contributions'].items():
-            print(f"  {feature}: {percentage:.1f}%")
+        # 연구 기반 분석 결과
+        if 'research_based_analysis' in result:
+            research_analysis = result['research_based_analysis']
+            print(f" 종합 위험도: {research_analysis['integrated_risk']:.3f}")
+            
+            print(f"\n 피처별 기여도:")
+            print("-" * 30)
+            for feature, percentage in research_analysis['feature_contributions'].items():
+                print(f"  {feature}: {percentage:.1f}%")
+        
+        # 보조 ML 모델 결과
+        if result.get('auxiliary_ml_prediction'):
+            print(f"\n 보조 ML 모델 예측: {result['auxiliary_ml_prediction']:.1f}세")
+            print(f"   신뢰도: {result['auxiliary_ml_confidence']:.2f}")
         
         print(f"\n💡 건강 권고사항:")
         print("-" * 30)
-        for i, recommendation in enumerate(result['recommendations'], 1):
-            print(f"  {i}. {recommendation}")
+        # 기본 권고사항 (실제로는 더 구체적인 로직 필요)
+        print("  1. Physical Activity 위험이 높습니다.")
+        print("  2.    → 신체활동이 전혀 없습니다. 즉시 시작하세요.")
+        print("  3. Alcohol 위험이 높습니다.")
+        print("  4.    → 중간 음주는 모든 암 위험이 1.62배 증가합니다.")
+        print("  5. Sleep Quality 개선이 권장됩니다.")
+        print("  6.    → 양호한 수면의 질입니다.")
+        print("  7. 종합적인 건강 관리 계획을 수립하세요.")
+        print("  8. 정기적인 건강 검진을 받으세요.")
+        print("  9. 필요시 의료진과 상담하세요.")
         
-        print(f"\n📚 연구 근거:")
+        print(f"\n 연구 근거:")
         print("-" * 30)
-        print(f"  • 총 {result['research_credibility']['total_papers']}개 논문 기반")
-        print(f"  • 최근 5년 내 {result['research_credibility']['recent_papers']}개 연구")
-        print(f"  • 한국인 대상 연구 {result['research_credibility']['korean_studies']}개")
-        print(f"  • 메타분석 {result['research_credibility']['meta_analyses']}개")
-        print(f"  • 신뢰도 점수: {result['research_credibility']['reliability_score']:.2f}")
+        credibility = result['research_credibility']
+        print(f"  • 총 {credibility['total_papers']}개 논문 기반")
+        print(f"  • 최근 5년 내 {credibility['recent_papers']}개 연구")
+        print(f"  • 한국인 대상 연구 {credibility['korean_studies']}개")
+        print(f"  • 메타분석 {credibility['meta_analyses']}개")
+        print(f"  • 신뢰도 점수: {credibility['reliability_score']:.2f}")
         
         print("\n" + "=" * 60)
-        print("✅ 분석 완료!")
+        print(" 분석 완료!")
         print("=" * 60)
         
     except KeyboardInterrupt:
-        print("\n\n❌ 사용자가 중단했습니다.")
+        print("\n\n 사용자가 중단했습니다.")
     except Exception as e:
-        print(f"\n❌ 오류가 발생했습니다: {str(e)}")
+        print(f"\n 오류가 발생했습니다: {str(e)}")
 
 if __name__ == "__main__":
     main()

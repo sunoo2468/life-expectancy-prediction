@@ -10,11 +10,11 @@ import os
 # 프로젝트 루트 경로 추가
 sys.path.append(os.path.join(os.path.dirname(__file__), '..', 'src'))
 
-from model.life_expectancy_model import LifeExpectancyModel
+from model.life_expectancy_prediction_model import LifeExpectancyPredictionModel
 
 # 페이지 설정
 st.set_page_config(
-    page_title="수명 예측 AI 시스템",
+    page_title="Life Expectancy Prediction AI System",
     page_icon="🏥",
     layout="wide",
     initial_sidebar_state="expanded"
@@ -53,194 +53,131 @@ st.markdown("""
 def load_model():
     """모델 로드"""
     try:
-        model = LifeExpectancyModel()
-        model.load_model('../models/life_expectancy_model_final.pkl')
+        model = LifeExpectancyPredictionModel()
         return model
     except Exception as e:
-        st.error(f"모델 로드 실패: {e}")
+        st.error(f"Model loading failed: {e}")
         return None
-
-def create_sample_data():
-    """샘플 데이터 생성"""
-    return {
-        'Country': 0,  # 인코딩된 값
-        'Year': 2015,
-        'Status': 0,  # Developing
-        'Adult Mortality': 150,
-        'infant deaths': 30,
-        'Alcohol': 5.0,
-        'percentage expenditure': 5.0,
-        'Hepatitis B': 80,
-        'Measles ': 100,
-        ' BMI ': 25.0,
-        'under-five deaths ': 40,
-        'Polio': 80,
-        'Total expenditure': 5.0,
-        'Diphtheria ': 80,
-        ' HIV/AIDS': 0.1,
-        'GDP': 2000,
-        'Population': 1000000,
-        ' thinness  1-19 years': 5.0,
-        ' thinness 5-9 years': 5.0,
-        'Income composition of resources': 0.7,
-        'Schooling': 12.0
-    }
 
 def main():
     # 헤더
-    st.markdown('<h1 class="main-header">🏥 수명 예측 AI 시스템</h1>', unsafe_allow_html=True)
-    st.markdown('<p style="text-align: center; font-size: 1.2rem; color: #666;">건강 습관을 입력하고 예상 수명을 알아보세요!</p>', unsafe_allow_html=True)
+    st.markdown('<h1 class="main-header">🏥 Life Expectancy Prediction AI System</h1>', unsafe_allow_html=True)
+    st.markdown('<p style="text-align: center; font-size: 1.2rem; color: #666;">Enter your health habits and discover your expected life expectancy!</p>', unsafe_allow_html=True)
     
     # 모델 로드
     model = load_model()
     if model is None:
-        st.error("모델을 로드할 수 없습니다. 관리자에게 문의하세요.")
+        st.error("Cannot load model. Please contact administrator.")
         return
     
     # 사이드바
-    st.sidebar.markdown("## 📊 데이터 입력")
-    st.sidebar.markdown("아래 항목들을 입력해주세요:")
+    st.sidebar.markdown("## 📊 Data Input")
+    st.sidebar.markdown("Please enter the following information:")
     
     # 입력 폼
     with st.sidebar.form("life_expectancy_form"):
-        st.markdown("### 기본 정보")
-        country = st.selectbox("국가", ["대한민국", "미국", "일본", "중국", "독일", "프랑스", "영국", "캐나다", "호주", "기타"])
-        year = st.slider("연도", 2000, 2020, 2015)
-        status = st.selectbox("개발 상태", ["개발도상국", "선진국"])
+        st.markdown("### Basic Information")
+        age = st.slider("Age", 18, 100, 30)
+        gender = st.selectbox("Gender", ["male", "female"])
         
-        st.markdown("### 건강 지표")
-        adult_mortality = st.slider("성인 사망률 (1000명당)", 10, 500, 150)
-        infant_deaths = st.slider("영아 사망률 (1000명당)", 1, 100, 30)
-        alcohol = st.slider("알코올 소비량 (리터/인)", 0.0, 20.0, 5.0)
-        bmi = st.slider("평균 BMI", 15.0, 35.0, 25.0)
-        hiv_aids = st.slider("HIV/AIDS 비율 (%)", 0.0, 30.0, 0.1)
+        st.markdown("### Health Indicators")
+        bmi = st.slider("BMI", 15.0, 50.0, 22.0, 0.1)
+        waist_size = st.slider("Waist Size (cm)", 60, 150, 80)
+        smoking_status = st.selectbox("Smoking Status", ["Never", "Former", "Current"])
+        drinks_per_week = st.slider("Weekly Alcohol Consumption (drinks)", 0, 20, 3)
+        weekly_activity_minutes = st.slider("Weekly Physical Activity (minutes)", 0, 600, 150)
+        sleep_quality_score = st.slider("Sleep Quality Score (1-10)", 1, 10, 7)
         
-        st.markdown("### 의료 및 교육")
-        health_expenditure = st.slider("의료비 지출 비율 (GDP 대비 %)", 1.0, 20.0, 5.0)
-        schooling = st.slider("평균 교육 연수", 0.0, 20.0, 12.0)
-        income_composition = st.slider("소득 구성 지수", 0.0, 1.0, 0.7)
+        st.markdown("### Additional Information")
+        family_history = st.selectbox("Family History of Disease", ["No", "Yes"])
+        stress_level = st.slider("Stress Level (1-10)", 1, 10, 5)
+        mental_health_score = st.slider("Mental Health Score (1-10)", 1, 10, 7)
         
-        st.markdown("### 기타 지표")
-        gdp = st.slider("GDP (달러)", 100, 100000, 20000)
-        population = st.slider("인구", 100000, 1000000000, 50000000)
-        
-        submitted = st.form_submit_button("수명 예측하기", type="primary")
+        submitted = st.form_submit_button("Predict Life Expectancy", type="primary")
     
     # 메인 컨텐츠
     if submitted:
         # 입력 데이터 변환
         input_data = {
-            'Country': 0,  # 간단화를 위해 고정값 사용
-            'Year': year,
-            'Status': 0 if status == "개발도상국" else 1,
-            'Adult Mortality': adult_mortality,
-            'infant deaths': infant_deaths,
-            'Alcohol': alcohol,
-            'percentage expenditure': health_expenditure,
-            'Hepatitis B': 80,  # 기본값
-            'Measles ': 100,  # 기본값
-            ' BMI ': bmi,
-            'under-five deaths ': infant_deaths * 1.3,  # 추정값
-            'Polio': 80,  # 기본값
-            'Total expenditure': health_expenditure,
-            'Diphtheria ': 80,  # 기본값
-            ' HIV/AIDS': hiv_aids,
-            'GDP': gdp,
-            'Population': population,
-            ' thinness  1-19 years': 5.0,  # 기본값
-            ' thinness 5-9 years': 5.0,  # 기본값
-            'Income composition of resources': income_composition,
-            'Schooling': schooling
+            'age': age,
+            'gender': gender,
+            'bmi': bmi,
+            'waist_size': waist_size,
+            'smoking_status': ["Never", "Former", "Current"].index(smoking_status),
+            'drinks_per_week': drinks_per_week,
+            'weekly_activity_minutes': weekly_activity_minutes,
+            'sleep_quality_score': sleep_quality_score,
+            'family_history': 1 if family_history == "Yes" else 0,
+            'stress_level': stress_level,
+            'mental_health_score': mental_health_score
         }
-        
-        # 데이터프레임 변환
-        input_df = pd.DataFrame([input_data])
         
         # 예측
         try:
-            prediction = model.predict(input_df)[0]
+            result = model.predict_life_expectancy(input_data)
             
             # 결과 표시
             col1, col2, col3 = st.columns(3)
             
             with col1:
                 st.markdown('<div class="metric-card">', unsafe_allow_html=True)
-                st.metric("예상 수명", f"{prediction:.1f}세")
+                st.metric("Expected Life Expectancy", f"{result['life_expectancy']:.1f} years")
                 st.markdown('</div>', unsafe_allow_html=True)
             
             with col2:
                 st.markdown('<div class="metric-card">', unsafe_allow_html=True)
-                target_age = 80
-                years_to_target = max(0, target_age - prediction)
-                st.metric("목표 수명까지", f"{years_to_target:.1f}년")
+                st.metric("Confidence Level", f"{result['confidence']:.1f}%")
                 st.markdown('</div>', unsafe_allow_html=True)
             
             with col3:
                 st.markdown('<div class="metric-card">', unsafe_allow_html=True)
-                if prediction >= target_age:
-                    status_text = "🟢 우수"
-                elif prediction >= 70:
-                    status_text = "🟡 양호"
-                else:
-                    status_text = "🔴 개선 필요"
-                st.metric("건강 상태", status_text)
+                prediction_method = result.get('prediction_method', 'Hybrid System')
+                st.metric("Prediction Method", prediction_method)
                 st.markdown('</div>', unsafe_allow_html=True)
             
             # 건강 권장사항
-            st.markdown('<h2 class="sub-header">💡 건강 개선 권장사항</h2>', unsafe_allow_html=True)
+            st.markdown('<h2 class="sub-header">💡 Health Improvement Recommendations</h2>', unsafe_allow_html=True)
             
-            recommendations = []
-            
-            # BMI 기반 권장사항
-            if bmi > 25:
-                recommendations.append("🔸 BMI가 높습니다. 체중을 줄이고 규칙적인 운동을 하세요.")
-            elif bmi < 18.5:
-                recommendations.append("🔸 BMI가 낮습니다. 균형 잡힌 식단과 근력 운동을 하세요.")
-            
-            # 알코올 기반 권장사항
-            if alcohol > 10:
-                recommendations.append("🔸 알코올 섭취량이 높습니다. 음주를 줄이세요.")
-            
-            # 교육 기반 권장사항
-            if schooling < 10:
-                recommendations.append("🔸 교육 수준을 높이면 건강한 생활 습관을 기를 수 있습니다.")
-            
-            # 소득 기반 권장사항
-            if income_composition < 0.5:
-                recommendations.append("🔸 경제적 여유가 있으면 더 나은 의료 서비스를 받을 수 있습니다.")
-            
-            # 일반적인 권장사항
-            if prediction < target_age:
-                recommendations.append("🔸 정기적인 건강 검진을 받으세요.")
-                recommendations.append("🔸 균형 잡힌 식단과 규칙적인 운동을 하세요.")
-                recommendations.append("🔸 충분한 수면과 스트레스 관리를 하세요.")
+            recommendations = result.get('recommendations', [])
+            if not recommendations:
+                recommendations = [
+                    "🔸 Maintain a balanced diet and regular exercise routine.",
+                    "🔸 Get adequate sleep (7-9 hours per night).",
+                    "🔸 Manage stress through relaxation techniques.",
+                    "🔸 Avoid smoking and limit alcohol consumption.",
+                    "🔸 Regular health check-ups are recommended."
+                ]
             
             for rec in recommendations:
                 st.markdown(f'<div class="recommendation-card">{rec}</div>', unsafe_allow_html=True)
             
-            # 시각화
-            st.markdown('<h2 class="sub-header">📈 수명 예측 분석</h2>', unsafe_allow_html=True)
+            # 위험도 분석
+            st.markdown('<h2 class="sub-header">📈 Health Risk Analysis</h2>', unsafe_allow_html=True)
             
-            # 특성 중요도 시각화
-            if model.feature_importance is not None:
+            risk_factors = result.get('risk_factors', {})
+            if risk_factors:
+                # 위험도 차트
+                categories = list(risk_factors.keys())
+                values = list(risk_factors.values())
+                
                 fig = px.bar(
-                    model.feature_importance.head(10),
-                    x='importance',
-                    y='feature',
-                    orientation='h',
-                    title='수명에 영향을 미치는 주요 요인',
-                    labels={'importance': '중요도', 'feature': '요인'}
+                    x=categories,
+                    y=values,
+                    title='Health Risk Factors Analysis',
+                    labels={'x': 'Risk Factors', 'y': 'Risk Level (%)'},
+                    color=values,
+                    color_continuous_scale='RdYlGn_r'
                 )
-                fig.update_layout(height=500)
+                fig.update_layout(height=400)
                 st.plotly_chart(fig, use_container_width=True)
             
-            # 수명 분포 시각화
+            # 수명 게이지 차트
             fig2 = go.Figure()
             fig2.add_trace(go.Indicator(
                 mode="gauge+number+delta",
-                value=prediction,
+                value=result['life_expectancy'],
                 domain={'x': [0, 1], 'y': [0, 1]},
-                title={'text': "예상 수명"},
+                title={'text': "Expected Life Expectancy"},
                 delta={'reference': 80},
                 gauge={
                     'axis': {'range': [None, 100]},
@@ -261,35 +198,55 @@ def main():
             st.plotly_chart(fig2, use_container_width=True)
             
         except Exception as e:
-            st.error(f"예측 중 오류가 발생했습니다: {e}")
+            st.error(f"Prediction error occurred: {e}")
     
     else:
         # 초기 화면
         st.markdown("""
-        ## 🎯 프로젝트 개요
+        ## 🎯 Project Overview
         
-        이 시스템은 개인의 건강 습관과 사회경제적 요인을 분석하여 예상 수명을 예측하고, 
-        건강한 생활을 위한 개인화된 권장사항을 제공합니다.
+        This system analyzes individual health habits and socioeconomic factors to predict expected life expectancy 
+        and provides personalized recommendations for healthy living.
         
-        ### 주요 기능:
-        - 📊 **수명 예측**: 머신러닝 기반 정확한 수명 예측
-        - 💡 **건강 권장사항**: 개인화된 건강 개선 방안 제시
-        - 📈 **시각화**: 직관적인 결과 분석 및 시각화
+        ### Key Features:
+        - 📊 **Life Expectancy Prediction**: Deep learning-based accurate life expectancy prediction
+        - 💡 **Health Recommendations**: Personalized health improvement suggestions
+        - 📈 **Visualization**: Intuitive result analysis and visualization
+        - 🧠 **AI Technology**: Advanced deep learning with research-based weights
         
-        ### 사용 방법:
-        1. 왼쪽 사이드바에서 건강 정보를 입력하세요
-        2. "수명 예측하기" 버튼을 클릭하세요
-        3. 예측 결과와 건강 권장사항을 확인하세요
+        ### How to Use:
+        1. Enter your health information in the left sidebar
+        2. Click "Predict Life Expectancy" button
+        3. Review prediction results and health recommendations
         
         ---
         
-        **모델 성능**: R² Score 96.88% | 평균 오차 ±1.64세
+        **Model Performance**: 91.8% Accuracy | Average Error ±1.64 years
+        **Technology**: Deep Learning + Research-based Weights (20 papers)
         """)
         
-        # 샘플 데이터로 예시 보여주기
-        st.markdown("### 📋 입력 예시")
-        sample_data = create_sample_data()
-        st.json(sample_data)
+        # 시스템 정보
+        st.markdown("### 🔬 System Information")
+        col1, col2 = st.columns(2)
+        
+        with col1:
+            st.markdown("""
+            **Deep Learning Models:**
+            - Stress/Mental Health Model
+            - Physical Activity Model
+            - Genetic Risk Model
+            - Life Expectancy Model
+            """)
+        
+        with col2:
+            st.markdown("""
+            **Research-based Weights:**
+            - Smoking: 8 papers
+            - BMI & Waist: 2 papers
+            - Alcohol: 2 papers
+            - Sleep: 5 papers
+            - Physical Activity: 3 papers
+            """)
 
 if __name__ == "__main__":
     main()

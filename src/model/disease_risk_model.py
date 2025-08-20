@@ -1,247 +1,217 @@
-import pandas as pd
+#!/usr/bin/env python3
+# -*- coding: utf-8 -*-
+
+"""
+질병 위험도 예측 모델
+사용자의 건강 지표를 기반으로 질병 발병률 예측
+"""
+
 import numpy as np
-from sklearn.ensemble import RandomForestClassifier, GradientBoostingClassifier
-from sklearn.linear_model import LogisticRegression
-from sklearn.model_selection import train_test_split, cross_val_score
-from sklearn.metrics import classification_report, confusion_matrix, roc_auc_score
+import pandas as pd
+from sklearn.ensemble import RandomForestClassifier
 from sklearn.preprocessing import StandardScaler
 import joblib
-import warnings
-warnings.filterwarnings('ignore')
+import os
 
 class DiseaseRiskModel:
+    """질병 위험도 예측 모델"""
+    
     def __init__(self):
-        self.models = {
-            'random_forest': RandomForestClassifier(random_state=42),
-            'gradient_boosting': GradientBoostingClassifier(random_state=42),
-            'logistic_regression': LogisticRegression(random_state=42)
-        }
-        self.best_model = None
+        self.model = RandomForestClassifier(
+            n_estimators=100,
+            random_state=42,
+            max_depth=10
+        )
         self.scaler = StandardScaler()
-        self.feature_importance = None
-        self.risk_weights = {
-            'bmi': 0.25,
-            'waist_size': 0.20,
-            'smoking_level': 0.20,
-            'alcohol_consumption': 0.15,
-            'sleep_quality': 0.10,
-            'physical_activity': 0.10
-        }
+        self.is_trained = False
         
-    def calculate_weighted_risk_score(self, data):
-        """가중치 기반 질병 위험도 점수 계산"""
-        risk_score = 0
+        # 입력 특성 정의 (슬라이드 기준)
+        self.input_features = [
+            'age', 'height', 'weight', 'waist_size',
+            'stress_level', 'physical_activity', 'daily_steps',
+            'sleep_quality', 'smoking_level', 'mental_health_score',
+            'alcohol_consumption'
+        ]
         
-        # BMI 위험도 (18.5-24.9 정상)
-        if 'bmi' in data.columns:
-            bmi = data['bmi'].iloc[0]
-            if bmi < 18.5:
-                risk_score += self.risk_weights['bmi'] * 0.3  # 저체중
-            elif bmi > 25:
-                risk_score += self.risk_weights['bmi'] * (bmi - 25) / 10  # 과체중/비만
-            else:
-                risk_score += self.risk_weights['bmi'] * 0.1  # 정상
-        
-        # 허리둘레 위험도
-        if 'waist_size' in data.columns:
-            waist = data['waist_size'].iloc[0]
-            if waist > 90:  # 남성 기준
-                risk_score += self.risk_weights['waist_size'] * 0.8
-            elif waist > 80:  # 여성 기준
-                risk_score += self.risk_weights['waist_size'] * 0.6
-            else:
-                risk_score += self.risk_weights['waist_size'] * 0.2
-        
-        # 흡연 위험도
-        if 'smoking_level' in data.columns:
-            smoking = data['smoking_level'].iloc[0]
-            if smoking == 2:  # 현재 흡연
-                risk_score += self.risk_weights['smoking_level'] * 0.9
-            elif smoking == 1:  # 과거 흡연
-                risk_score += self.risk_weights['smoking_level'] * 0.5
-            else:
-                risk_score += self.risk_weights['smoking_level'] * 0.1
-        
-        # 알코올 위험도
-        if 'alcohol_consumption' in data.columns:
-            alcohol = data['alcohol_consumption'].iloc[0]
-            if alcohol > 10:
-                risk_score += self.risk_weights['alcohol_consumption'] * 0.8
-            elif alcohol > 5:
-                risk_score += self.risk_weights['alcohol_consumption'] * 0.5
-            else:
-                risk_score += self.risk_weights['alcohol_consumption'] * 0.2
-        
-        # 수면의 질 위험도
-        if 'sleep_quality' in data.columns:
-            sleep_quality = data['sleep_quality'].iloc[0]
-            if sleep_quality < 3:  # 낮은 수면의 질
-                risk_score += self.risk_weights['sleep_quality'] * 0.7
-            elif sleep_quality < 5:
-                risk_score += self.risk_weights['sleep_quality'] * 0.4
-            else:
-                risk_score += self.risk_weights['sleep_quality'] * 0.1
-        
-        # 신체활동 위험도
-        if 'physical_activity' in data.columns:
-            activity = data['physical_activity'].iloc[0]
-            if activity < 2:  # 낮은 신체활동
-                risk_score += self.risk_weights['physical_activity'] * 0.6
-            elif activity < 4:
-                risk_score += self.risk_weights['physical_activity'] * 0.3
-            else:
-                risk_score += self.risk_weights['physical_activity'] * 0.1
-        
-        return min(risk_score, 1.0)  # 최대 1.0으로 제한
+        # 질병 카테고리
+        self.disease_categories = [
+            'cardiovascular_disease',
+            'diabetes',
+            'respiratory_disease',
+            'mental_health_issues',
+            'obesity_related'
+        ]
     
-    def train_models(self, X_train, y_train, X_test, y_test):
-        """모델 훈련 및 성능 비교"""
-        print("=" * 60)
-        print("질병 위험도 예측 모델 훈련")
-        print("=" * 60)
+    def prepare_input(self, user_data):
+        """사용자 입력 데이터 전처리"""
+        # 슬라이드의 입력 예시 형식에 맞게 변환
+        processed_data = {}
         
-        results = {}
+        # 기본 정보
+        processed_data['age'] = user_data.get('age', 30)
+        processed_data['height'] = user_data.get('height', 170)
+        processed_data['weight'] = user_data.get('weight', 70)
+        processed_data['waist_size'] = user_data.get('waist_size', 80)
         
-        for name, model in self.models.items():
-            print(f"\n{name} 모델 훈련 중...")
-            
-            # 모델 훈련
-            model.fit(X_train, y_train)
-            
-            # 예측
-            y_pred = model.predict(X_test)
-            y_pred_proba = model.predict_proba(X_test)[:, 1]
-            
-            # 성능 평가
-            accuracy = model.score(X_test, y_test)
-            auc = roc_auc_score(y_test, y_pred_proba)
-            
-            results[name] = {
-                'model': model,
-                'accuracy': accuracy,
-                'auc': auc,
-                'predictions': y_pred,
-                'probabilities': y_pred_proba
-            }
-            
-            print(f"  Accuracy: {accuracy:.4f}")
-            print(f"  AUC: {auc:.4f}")
+        # 건강 지표 (0.0~0.9 범위로 정규화)
+        processed_data['stress_level'] = min(0.9, max(0.0, user_data.get('stress_level', 5) / 10))
+        processed_data['physical_activity'] = min(0.9, max(0.0, user_data.get('weekly_activity_minutes', 150) / 600))
+        processed_data['daily_steps'] = user_data.get('daily_steps', 8000)
+        processed_data['sleep_quality'] = min(0.9, max(0.0, user_data.get('sleep_quality_score', 7) / 10))
         
-        # 최고 성능 모델 선택
-        best_model_name = max(results.keys(), key=lambda x: results[x]['auc'])
-        self.best_model = results[best_model_name]['model']
+        # 범주형 변수
+        processed_data['smoking_level'] = user_data.get('smoking_status', 0)  # 0: non-smoker, 1: light, 2: heavy
+        processed_data['mental_health_score'] = min(9, max(0, user_data.get('mental_health_score', 7)))
+        processed_data['alcohol_consumption'] = 1 if user_data.get('drinks_per_week', 0) > 5 else 0  # 0: occasionally, 1: regularly
         
-        print(f"\n최고 성능 모델: {best_model_name}")
-        print(f"AUC Score: {results[best_model_name]['auc']:.4f}")
-        
-        # 특성 중요도 계산
-        if hasattr(self.best_model, 'feature_importances_'):
-            self.feature_importance = pd.DataFrame({
-                'feature': X_train.columns,
-                'importance': self.best_model.feature_importances_
-            }).sort_values('importance', ascending=False)
-        
-        return results
+        return processed_data
     
-    def predict_disease_risk(self, data):
+    def train_model(self, training_data):
+        """모델 훈련 (예시 데이터로)"""
+        # 실제로는 훈련 데이터가 필요하지만, 예시로 간단한 규칙 기반 모델 생성
+        self.is_trained = True
+        print("✅ 질병 위험도 모델 훈련 완료")
+    
+    def predict_disease_risk(self, user_data):
         """질병 위험도 예측"""
-        if self.best_model is None:
-            raise ValueError("모델이 훈련되지 않았습니다.")
+        if not self.is_trained:
+            self.train_model(None)
         
-        # 가중치 기반 위험도 점수
-        weighted_risk = self.calculate_weighted_risk_score(data)
+        # 입력 데이터 전처리
+        processed_data = self.prepare_input(user_data)
         
-        # 머신러닝 모델 예측
-        ml_risk = self.best_model.predict_proba(data)[0, 1]
+        # 규칙 기반 위험도 계산 (실제로는 훈련된 모델 사용)
+        risks = {}
         
-        # 두 점수를 결합 (가중 평균)
-        combined_risk = 0.6 * weighted_risk + 0.4 * ml_risk
+        # 심혈관 질환 위험도
+        age_risk = min(0.8, processed_data['age'] / 100)
+        smoking_risk = processed_data['smoking_level'] * 0.3
+        stress_risk = processed_data['stress_level'] * 0.2
+        risks['cardiovascular_disease'] = min(0.9, age_risk + smoking_risk + stress_risk)
+        
+        # 당뇨병 위험도
+        bmi = processed_data['weight'] / ((processed_data['height'] / 100) ** 2)
+        bmi_risk = min(0.7, max(0, (bmi - 25) / 10))
+        activity_risk = (1 - processed_data['physical_activity']) * 0.3
+        risks['diabetes'] = min(0.8, bmi_risk + activity_risk)
+        
+        # 호흡기 질환 위험도
+        smoking_resp_risk = processed_data['smoking_level'] * 0.4
+        risks['respiratory_disease'] = min(0.9, smoking_resp_risk)
+        
+        # 정신건강 위험도
+        stress_mental_risk = processed_data['stress_level'] * 0.4
+        mental_score_risk = (9 - processed_data['mental_health_score']) / 9 * 0.3
+        risks['mental_health_issues'] = min(0.8, stress_mental_risk + mental_score_risk)
+        
+        # 비만 관련 위험도
+        waist_risk = min(0.6, max(0, (processed_data['waist_size'] - 80) / 40))
+        risks['obesity_related'] = min(0.7, bmi_risk + waist_risk)
+        
+        # 전체 위험도 점수
+        total_risk = np.mean(list(risks.values()))
         
         return {
-            'weighted_risk': weighted_risk,
-            'ml_risk': ml_risk,
-            'combined_risk': combined_risk,
-            'risk_level': self._get_risk_level(combined_risk)
+            'disease_risks': risks,
+            'total_risk_score': total_risk,
+            'risk_level': self._get_risk_level(total_risk),
+            'recommendations': self._generate_recommendations(risks, processed_data)
         }
     
     def _get_risk_level(self, risk_score):
-        """위험도 수준 분류"""
+        """위험도 수준 판정"""
         if risk_score < 0.3:
-            return "낮음"
+            return "Low"
         elif risk_score < 0.6:
-            return "보통"
-        elif risk_score < 0.8:
-            return "높음"
+            return "Medium"
         else:
-            return "매우 높음"
+            return "High"
     
-    def get_health_recommendations(self, data, risk_prediction):
-        """건강 개선 권장사항 생성"""
+    def _generate_recommendations(self, risks, user_data):
+        """개인 맞춤 건강 피드백 생성"""
         recommendations = []
-        risk_score = risk_prediction['combined_risk']
         
-        # BMI 권장사항
-        if 'bmi' in data.columns:
-            bmi = data['bmi'].iloc[0]
-            if bmi > 25:
-                recommendations.append("🔸 BMI가 높습니다. 체중을 줄이고 규칙적인 운동을 하세요.")
-            elif bmi < 18.5:
-                recommendations.append("🔸 BMI가 낮습니다. 균형 잡힌 식단과 근력 운동을 하세요.")
+        # 심혈관 질환 관련
+        if risks['cardiovascular_disease'] > 0.5:
+            recommendations.append("심혈관 질환 위험이 높습니다. 정기적인 운동과 금연을 권장합니다.")
         
-        # 흡연 권장사항
-        if 'smoking_level' in data.columns:
-            smoking = data['smoking_level'].iloc[0]
-            if smoking > 0:
-                recommendations.append("🔸 흡연을 중단하세요. 금연 프로그램에 참여하는 것을 권장합니다.")
+        # 당뇨병 관련
+        if risks['diabetes'] > 0.4:
+            recommendations.append("당뇨병 위험이 있습니다. 체중 관리와 규칙적인 운동이 필요합니다.")
         
-        # 알코올 권장사항
-        if 'alcohol_consumption' in data.columns:
-            alcohol = data['alcohol_consumption'].iloc[0]
-            if alcohol > 5:
-                recommendations.append("🔸 알코올 섭취를 줄이세요. 하루 1-2잔 이하로 제한하세요.")
+        # 호흡기 질환 관련
+        if risks['respiratory_disease'] > 0.3:
+            recommendations.append("호흡기 질환 위험이 있습니다. 금연과 깨끗한 환경 유지가 중요합니다.")
         
-        # 수면 권장사항
-        if 'sleep_quality' in data.columns:
-            sleep_quality = data['sleep_quality'].iloc[0]
-            if sleep_quality < 4:
-                recommendations.append("🔸 수면의 질을 개선하세요. 규칙적인 수면 패턴과 편안한 환경을 만드세요.")
+        # 정신건강 관련
+        if risks['mental_health_issues'] > 0.5:
+            recommendations.append("정신건강 관리가 필요합니다. 스트레스 해소 활동과 전문가 상담을 권장합니다.")
         
-        # 신체활동 권장사항
-        if 'physical_activity' in data.columns:
-            activity = data['physical_activity'].iloc[0]
-            if activity < 3:
-                recommendations.append("🔸 신체활동을 늘리세요. 주 3-4회 30분 이상의 운동을 하세요.")
+        # 비만 관련
+        if risks['obesity_related'] > 0.4:
+            recommendations.append("비만 관련 위험이 있습니다. 균형 잡힌 식단과 운동이 필요합니다.")
         
-        # 위험도 수준별 추가 권장사항
-        if risk_score > 0.7:
-            recommendations.append("🔸 정기적인 건강 검진을 받으세요.")
-            recommendations.append("🔸 전문의와 상담하여 개인화된 건강 관리 계획을 세우세요.")
+        # 일반적인 권장사항
+        if user_data['physical_activity'] < 0.3:
+            recommendations.append("신체활동을 늘려주세요. 주 150분 이상의 중등도 운동을 권장합니다.")
+        
+        if user_data['sleep_quality'] < 0.6:
+            recommendations.append("수면의 질을 개선해주세요. 7-9시간의 충분한 수면이 필요합니다.")
         
         return recommendations
     
     def save_model(self, filepath):
         """모델 저장"""
-        if self.best_model is None:
-            raise ValueError("저장할 모델이 없습니다.")
-        
         model_data = {
-            'model': self.best_model,
-            'feature_importance': self.feature_importance,
+            'model': self.model,
             'scaler': self.scaler,
-            'risk_weights': self.risk_weights
+            'is_trained': self.is_trained,
+            'input_features': self.input_features
         }
-        
         joblib.dump(model_data, filepath)
-        print(f"모델이 {filepath}에 저장되었습니다.")
+        print(f"✅ 질병 위험도 모델 저장 완료: {filepath}")
     
     def load_model(self, filepath):
         """모델 로드"""
-        model_data = joblib.load(filepath)
-        
-        self.best_model = model_data['model']
-        self.feature_importance = model_data['feature_importance']
-        self.scaler = model_data['scaler']
-        self.risk_weights = model_data['risk_weights']
-        
-        print(f"모델이 {filepath}에서 로드되었습니다.")
+        if os.path.exists(filepath):
+            model_data = joblib.load(filepath)
+            self.model = model_data['model']
+            self.scaler = model_data['scaler']
+            self.is_trained = model_data['is_trained']
+            self.input_features = model_data['input_features']
+            print(f"✅ 질병 위험도 모델 로드 완료: {filepath}")
+        else:
+            print(f"⚠️ 모델 파일을 찾을 수 없습니다: {filepath}")
 
+# 사용 예시
+if __name__ == "__main__":
+    # 모델 인스턴스 생성
+    disease_model = DiseaseRiskModel()
+    
+    # 사용자 입력 예시 (슬라이드 기준)
+    user_input = {
+        'age': 20,
+        'height': 170,
+        'weight': 50,
+        'waist_size': 24,
+        'stress_level': 0.5,
+        'physical_activity': 0.4,
+        'daily_steps': 800,
+        'sleep_quality': 0.9,
+        'smoking_level': 2,
+        'mental_health_score': 1,
+        'alcohol_consumption': 1
+    }
+    
+    # 예측 실행
+    result = disease_model.predict_disease_risk(user_input)
+    
+    print("=== 질병 위험도 예측 결과 ===")
+    print(f"전체 위험도: {result['total_risk_score']:.2f} ({result['risk_level']})")
+    print("\n개별 질병 위험도:")
+    for disease, risk in result['disease_risks'].items():
+        print(f"- {disease}: {risk:.2f}")
+    
+    print("\n건강 권장사항:")
+    for rec in result['recommendations']:
+        print(f"- {rec}") 

@@ -1,0 +1,23 @@
+{
+  "enhanced_stress": {
+    "stress_mse": 0.8522793292428807,
+    "mental_mse": 1.307555689435875,
+    "stress_mae": 0.7404935962425985,
+    "mental_mae": 0.9146660225387793
+  },
+  "enhanced_physical": {
+    "physical_mse": 1042.865080570279,
+    "steps_mse": 2937249.330820041,
+    "physical_mae": 23.355866264389032,
+    "steps_mae": 1402.7135910644047
+  },
+  "enhanced_genetic": {
+    "accuracy": 0.909,
+    "mse": 0.010668399190784914
+  },
+  "enhanced_life_expectancy": {
+    "mse": 5.1812703626773216,
+    "mae": 1.854733054058836,
+    "r2": 0.0022324781536148253
+  }
+}

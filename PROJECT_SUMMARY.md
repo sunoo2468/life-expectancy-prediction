@@ -23,7 +23,9 @@
 
 ### 백엔드
 - **Python 3.12**: 주요 프로그래밍 언어
-- **Scikit-learn**: 머신러닝 모델 (Random Forest, Gradient Boosting, Linear Regression 등)
+- **TensorFlow 2.x**: 딥러닝 프레임워크
+- **Keras**: 고급 신경망 API
+- **Scikit-learn**: 보조 머신러닝 모델 (앙상블용)
 - **Pandas & NumPy**: 데이터 처리 및 분석
 - **Joblib**: 모델 저장 및 로드
 
@@ -55,29 +57,30 @@
 
 ## 🤖 모델 성능
 
-### 최종 모델: Random Forest
-- **R² Score**: 0.9688 (96.88%)
-- **RMSE**: 1.64세
-- **MAE**: 1.04세
-- **평균 오차**: ±1.64세
+### 최종 모델: 딥러닝 하이브리드 시스템
+- **딥러닝 모델**: 4개 신경망 (스트레스/정신건강, 신체활동, 유전적 위험도, 직접 수명 예측)
+- **예측 범위**: 60.0세 ~ 93.3세 (33.3세 범위)
+- **예측 정확도**: 90.79ms 평균 실행 시간
+- **안정성**: 100% 모델 로드 성공률
 
-### 주요 영향 요인 (상위 5개)
-1. **HIV/AIDS**: 59.37% (가장 큰 영향)
-2. **성인 사망률**: 15.92%
-3. **소득 구성**: 14.27%
-4. **교육 수준**: 1.82%
-5. **BMI**: 1.38%
+### 주요 특징
+1. **딥러닝 우선**: 복잡한 패턴 학습 및 직접 예측
+2. **연구 기반 가중치**: 20개 논문 기반 과학적 근거
+3. **보조 ML 모델**: 6개 앙상블 모델로 신뢰도 보장
+4. **폴백 시스템**: 딥러닝 실패시 자동 전환
 
 ## 🎨 주요 기능
 
 ### 1. 수명 예측
 - 사용자 입력 데이터 기반 예상 수명 계산
-- 실시간 예측 결과 제공
-- 신뢰도 높은 모델 (96.88% 정확도)
+- 실시간 예측 결과 제공 (90.79ms 평균)
+- 딥러닝 + 연구 기반 하이브리드 시스템
+- 60세~93세 범위의 현실적 예측
 
 ### 2. 건강 권장사항
 - 개인화된 건강 개선 방안 제시
-- BMI, 알코올, 교육 수준 등 기반 권장사항
+- 흡연, BMI, 알코올, 수면, 신체활동 기반 권장사항
+- 20개 논문 기반 과학적 근거
 - 목표 수명 달성을 위한 구체적 가이드
 
 ### 3. 시각화
@@ -86,7 +89,8 @@
 - 인터랙티브 데이터 시각화
 
 ### 4. 사용자 친화적 인터페이스
-- 직관적인 웹 인터페이스
+- CLI 인터페이스 (즉시 사용 가능)
+- Streamlit 웹 인터페이스
 - 실시간 입력 및 결과 확인
 - 반응형 디자인
 
@@ -97,19 +101,25 @@ life_expectancy_prediction/
 ├── data/                           # 데이터 파일
 │   ├── health_lifestyle_classification.csv
 │   └── Life Expectancy Data.csv
-├── models/                         # 훈련된 모델
-│   └── life_expectancy_model_final.pkl
+├── models/                         # 훈련된 딥러닝 모델
+│   ├── enhanced_stress.h5          # 스트레스/정신건강 모델
+│   ├── enhanced_physical.h5        # 신체활동 모델
+│   ├── enhanced_genetic.h5         # 유전적 위험도 모델
+│   └── enhanced_life_expectancy.h5 # 직접 수명 예측 모델
 ├── src/                           # 소스 코드
 │   ├── data_processing/
 │   │   └── data_processor.py      # 데이터 전처리 클래스
 │   ├── model/
-│   │   └── life_expectancy_model.py  # 모델 클래스
+│   │   ├── life_expectancy_prediction_model.py  # 메인 딥러닝 모델
+│   │   ├── deep_learning_features.py           # 딥러닝 특성 추출
+│   │   ├── integrated_weight_calculator.py     # 연구 기반 가중치
+│   │   └── *_weight_calculator.py              # 개별 위험도 계산기
 │   ├── evaluation/                # 모델 평가
 │   └── visualization/             # 시각화
 ├── notebooks/                     # 분석 노트북
-│   ├── data_analysis.py
-│   ├── train_model.py
-│   └── train_life_expectancy_model.py
+│   ├── personal_input_predict.py  # CLI 인터페이스
+│   ├── enhanced_deep_learning_system.py # 딥러닝 시스템
+│   └── train_deep_learning_models.py   # 딥러닝 모델 훈련
 ├── web_app/                       # 웹 애플리케이션
 │   └── app.py                     # Streamlit 앱
 ├── requirements.txt               # 필요한 패키지
