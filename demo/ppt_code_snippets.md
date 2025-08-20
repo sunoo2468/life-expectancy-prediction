@@ -149,7 +149,7 @@ class LifeExpectancyPredictionModel:
 ```python
 def run_cli_interface():
     """CLI 인터페이스 실행"""
-    print("🧠 딥러닝 기반 수명 예측 AI 시스템")
+    print("딥러닝 기반 수명 예측 AI 시스템")
     print("=" * 50)
     
     # 사용자 입력 수집
